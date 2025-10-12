@@ -1,19 +1,18 @@
-package com.yao.memorytrain;
+package com.yao.memorytrain.game;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import static com.yao.memorytrain.Utils.Logd;
 
 import androidx.appcompat.widget.AppCompatImageView;
+
+import com.yao.memorytrain.R;
 
 // 自定义CardView，继承自AppCompatImageView，封装了翻牌动画
 public class CardView extends AppCompatImageView {

@@ -1,7 +1,5 @@
-package com.yao.memorytrain;
+package com.yao.memorytrain.game;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
@@ -12,8 +10,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.yao.memorytrain.R;
+import com.yao.memorytrain.game.OrderGameAdapter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.yao.memorytrain;
+package com.yao.memorytrain.game;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -35,19 +35,19 @@ public class GridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view;
-        ViewHolder holder;
+        View view = null;
+        ViewHolder holder = null;
 
-        if (convertView == null) {
-            // 加载布局
-            view = LayoutInflater.from(mContext).inflate(R.layout.grid_item, parent, false);
-            holder = new ViewHolder();
-            holder.numberTextView = view.findViewById(R.id.numberTextView);
-            view.setTag(holder);
-        } else {
-            view = convertView;
-            holder = (ViewHolder) view.getTag();
-        }
+//        if (convertView == null) {
+//            // 加载布局
+//            view = LayoutInflater.from(mContext).inflate(R.layout.grid_item, parent, false);
+//            holder = new ViewHolder();
+//            holder.numberTextView = view.findViewById(R.id.numberTextView);
+//            view.setTag(holder);
+//        } else {
+//            view = convertView;
+//            holder = (ViewHolder) view.getTag();
+//        }
 
         // 设置数字显示
         Integer number = mNumbers[position];

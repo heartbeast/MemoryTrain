@@ -1,27 +1,43 @@
 package com.yao.memorytrain;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
+
 import java.util.UUID;
 
 public class Utils {
-    private static final String TAG = "MemTrain";
+    private static final String TAG = "memtrain";
 
-    private static final String PREFS_FILE_SCORE = "device_score";
-    private static final String PREFS_USER = "id";
-    private static final String PREFS_TYPE = "type";
-    private static final String PREFS_SCORE = "score";
-
-
-
-    private static final String PREFS_FILE_ID = "device_id";
+    private static final String PREFS_FILE = "pref_all";
     private static final String PREFS_DEVICE_ID = "device_id";
     private static String uuid = null;
+    private static SharedPreferences prefs = null;
+
+    public static void init(Context context){
+        prefs = context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+    }
+    public static String getPrefs(String key, String defaultVal) {
+        return prefs.getString(key, defaultVal);
+    }
+    public static void setPrefs(String key, String val) {
+        prefs.edit().putString(key, val).apply();;
+    }
+    public static int getPrefs(String key, int defaultVal) {
+        Logd("=============before");
+        return prefs.getInt(key, defaultVal);
+    }
+    public static void setPrefs(String key, int val) {
+        prefs.edit().putInt(key, val).apply();;
+    }
+
     public static synchronized String getDeviceId(Context context) {
         if (uuid == null) {
-            SharedPreferences prefs = context.getSharedPreferences(PREFS_FILE_ID, Context.MODE_PRIVATE);
             String storedId = prefs.getString(PREFS_DEVICE_ID, null);
             if (storedId != null) { // 从存储中读取已生成的UUID
                 Logd("=====getDeviceId======== use stored id");

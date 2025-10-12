@@ -1,4 +1,6 @@
-package com.yao.memorytrain;
+package com.yao.memorytrain.game;
+
+import static com.yao.memorytrain.Utils.Logd;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,15 +14,20 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.yao.memorytrain.CustomAlertDialog;
+import com.yao.memorytrain.R;
+import com.yao.memorytrain.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class MaxNumberActivity extends AppCompatActivity {
-    private static final int MAX_ROUNDS = 20; // 最多20轮 (意味着最多测试 3+19 = 22 位数字)
+    private static final int MAX_ROUNDS = 50; // 最多x轮
     private static final int STARTING_DIGITS = 3; // 第一轮从3位数字开始
 
     private TextView roundTextView;
@@ -29,7 +36,7 @@ public class MaxNumberActivity extends AppCompatActivity {
     private Button submitButton;
     private Button startRoundButton; // 仅在第一轮显示，后续隐藏
     private GridLayout numberPadLayout; // 数字按钮布局
-    private Button deleteButton; // 删除按钮
+    private ImageButton deleteButton; // 删除按钮
 
     private int currentRound = 1;
     private int currentDigitCount = STARTING_DIGITS;
@@ -91,6 +98,23 @@ public class MaxNumberActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int i = Utils.getPrefs("isMaxNumFirstOpen", 0);
+        if (i == 0) {
+            new CustomAlertDialog(this)
+                    .setTitle("玩法提示")
+                    .setMessage("按顺序点击出现的数字，每过一轮会增加一个数字")
+                    .addButton("确认", (dialog) ->
+                            startNewRound(true)
+                    )
+                    .show();
+        } else {
+            startNewRound(true);
+        }
+        Utils.setPrefs("isMaxNumFirstOpen", 1);
+    }
     private void setupNumberPad() {
         // 为0-9的数字按钮设置点击监听器
         for (int i = 0; i < numberPadLayout.getChildCount(); i++) {
@@ -111,14 +135,14 @@ public class MaxNumberActivity extends AppCompatActivity {
     }
 
     private void appendDigitToInput(String digit) {
-        if (currentUserInput.length() < currentDigitCount) { // 限制输入长度不超过当前轮次数字位数
-            currentUserInput += digit;
-            userInputTextView.setText(currentUserInput);
-        } else {
-            Toast.makeText(this, "已达到本轮最大输入位数", Toast.LENGTH_SHORT).show();
+        currentUserInput += digit;
+        userInputTextView.setText(currentUserInput);
+        if (currentUserInput.length() == currentDigitCount) {
+            new Handler().postDelayed(() -> {
+                checkUserInput();
+            }, 500);
         }
     }
-
 
     private void updateRoundDisplay() {
         roundTextView.setText("第 " + currentRound + " 轮 ( " + currentDigitCount + " 位数字 )");
@@ -136,7 +160,6 @@ public class MaxNumberActivity extends AppCompatActivity {
         numberDisplayTextView.setText("等待开始...");
         numberDisplayTextView.setVisibility(View.VISIBLE);
 
-
         Runnable startSequence = new Runnable() {
             @Override
             public void run() {
@@ -144,14 +167,19 @@ public class MaxNumberActivity extends AppCompatActivity {
                 generateAndDisplayNumbers();
             }
         };
-
+        String msg;
+        if (currentRound == 1) {
+            msg = "游戏即将开始";
+        } else {
+            msg = "回答正确!\n\n下一轮即将开始";
+        }
         if (withDelay) {
             // 显示“本轮即将开始”的提示
-            numberDisplayTextView.setText("本轮即将开始 (2s)");
+            numberDisplayTextView.setText(msg + "(2s)");
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    numberDisplayTextView.setText("本轮即将开始 (1s)");
+                    numberDisplayTextView.setText(msg + "(1s)");
                 }
             }, 1000);
             handler.postDelayed(startSequence, 2000); // 延迟2秒后开始数字显示
@@ -181,6 +209,7 @@ public class MaxNumberActivity extends AppCompatActivity {
         if (currentDisplayIndex < displayedNumbers.size()) {
             int numberToShow = displayedNumbers.get(currentDisplayIndex);
             numberDisplayTextView.setText(String.valueOf(numberToShow));
+            numberDisplayTextView.setTextSize(64f);
 
             // 添加动画效果
             numberDisplayTextView.setScaleX(0.5f);
@@ -207,9 +236,10 @@ public class MaxNumberActivity extends AppCompatActivity {
         } else {
             // 所有数字显示完毕
             numberDisplayTextView.setVisibility(View.GONE);
+            numberDisplayTextView.setTextSize(36f);
             userInputTextView.setVisibility(View.VISIBLE);
             numberPadLayout.setVisibility(View.VISIBLE);
-            submitButton.setVisibility(View.VISIBLE);
+//            submitButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
         }
     }
@@ -221,31 +251,36 @@ public class MaxNumberActivity extends AppCompatActivity {
         }
 
         if (currentUserInput.equals(correctDigits)) {
-            Toast.makeText(this, "恭喜，回答正确！", Toast.LENGTH_SHORT).show();
             maxMemorySpan = currentDigitCount; // 更新最大记忆广度
 
             if (currentRound < MAX_ROUNDS) {
                 currentRound++;
                 currentDigitCount++;
                 updateRoundDisplay();
-                // 准备下一轮，除第一轮外，后面每轮都是等两秒自动开始游戏
                 startNewRound(true);
             } else {
                 // 所有轮次完成，游戏结束
 //                endGame();
             }
         } else {
-            Toast.makeText(this, "回答错误！", Toast.LENGTH_SHORT).show();
-//            endGame(); // 匹配失败，游戏结束
+            new CustomAlertDialog(this)
+                    .setTitle("提示")
+                    .setMessage("回答错误，游戏结束")
+                    .addButton("不玩了", (dialog) -> endGame())
+                    .addButton("再来一次", (dialog) -> {
+                        currentRound = 1;
+                        startNewRound(true);
+                    })
+                    .show();
         }
     }
 
-//    private void endGame() {
+    private void endGame() {
 //        Intent intent = new Intent(GameActivity.this, ResultActivity.class);
 //        intent.putExtra("MAX_MEMORY_SPAN", maxMemorySpan);
 //        startActivity(intent);
-//        finish(); // 结束游戏Activity
-//    }
+        finish(); // 结束游戏Activity
+    }
 
     @Override
     protected void onDestroy() {

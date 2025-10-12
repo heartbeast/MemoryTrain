@@ -6,16 +6,13 @@
     android:gravity="center"
     android:padding="16dp">
 
-    <!-- Game Title -->
-
-    <!-- Player Name Input -->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="30dp"
         android:text="记忆力训练"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
 
@@ -24,6 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="翻牌游戏"
+        android:textSize="24sp"
         android:layout_marginTop="20dp"
         android:onClick="startFlipGame" />
 
@@ -32,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="最长数字"
+        android:textSize="24sp"
         android:layout_marginTop="20dp"
         android:onClick="startMaxNumberGame" />
 
@@ -40,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="记住方块次序"
+        android:textSize="24sp"
         android:layout_marginTop="20dp"
         android:onClick="startOrderNumber" />
 </LinearLayout>

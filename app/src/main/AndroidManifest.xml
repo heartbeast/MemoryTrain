@@ -3,9 +3,10 @@
     package="com.yao.memorytrain">
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="记忆力训练"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MemoryTrain">
@@ -19,14 +20,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FlipCardGameActivity" >
+            android:name=".game.FlipCardGameActivity" >
         </activity>
 
         <activity
-            android:name=".MaxNumberActivity" >
+            android:name=".game.MaxNumberActivity" >
         </activity>
         <activity
-            android:name=".OrderNumberActivity" >
+            android:name=".game.OrderNumberActivity" >
         </activity>
     </application>
 

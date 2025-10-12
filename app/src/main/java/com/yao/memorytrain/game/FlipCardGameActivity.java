@@ -1,17 +1,13 @@
-package com.yao.memorytrain;
+package com.yao.memorytrain.game;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,14 +18,17 @@ import java.util.Collections;
 import java.util.List;
 import static com.yao.memorytrain.Utils.Logd;
 
+import com.yao.memorytrain.CustomAlertDialog;
+import com.yao.memorytrain.R;
+
 public class FlipCardGameActivity extends AppCompatActivity implements CardView.CardAnimationListener {
     private GridLayout gameGridLayout;
     private TextView tvClickCount;
     private Button btnRestart;
     private Button btnSettings;
 
-    private int columnCount = 3; // 默认列数
-    private int rowCount = 2; // 默认行数
+    private int columnCount = 4; // 默认列数
+    private int rowCount = 3; // 默认行数
     private int totalCards = columnCount * rowCount;
     private int screenWidth,screenHeight;
 
@@ -200,24 +199,36 @@ public class FlipCardGameActivity extends AppCompatActivity implements CardView.
 
     public void GameOver() {
         if (columnCount == 6 && rowCount == 5) { // 已经是最高难度
-            new android.app.AlertDialog.Builder(this) .setTitle("恭喜过关")
+            new CustomAlertDialog(this) .setTitle("恭喜过关")
                     .setMessage("点击次数: " + clickCounter)
-                    .setPositiveButton("再来一次", (dialog, which) -> startGame())
+                    .addButton("再来一次", (view) -> startGame())
                     .show();
         } else {
-            new android.app.AlertDialog.Builder(this) .setTitle("恭喜过关")
+            new CustomAlertDialog(this) .setTitle("恭喜过关")
                     .setMessage("点击次数: " + clickCounter)
-                    .setPositiveButton("再来一次", (dialog, which) -> startGame())
-                    .setNegativeButton("更高难度", (dialog, which) -> {
+                    .addButton("再来一次", (view) -> startGame())
+                    .addButton("更高难度", (view) -> {
                         // 根据当前难度级别设置RadioButton选中状态
                         columnCount += 1;
                         rowCount += 1;
                         totalCards = columnCount * rowCount;
                         Logd("new columnCount="+columnCount+",rowCount="+rowCount);
                         startGame();
-                        // dialog.dismiss();
                     })
                     .show();
+//            new android.app.AlertDialog.Builder(this) .setTitle("恭喜过关")
+//                    .setMessage("点击次数: " + clickCounter)
+//                    .setPositiveButton("再来一次", (dialog, which) -> startGame())
+//                    .setNegativeButton("更高难度", (dialog, which) -> {
+//                        // 根据当前难度级别设置RadioButton选中状态
+//                        columnCount += 1;
+//                        rowCount += 1;
+//                        totalCards = columnCount * rowCount;
+//                        Logd("new columnCount="+columnCount+",rowCount="+rowCount);
+//                        startGame();
+//                        // dialog.dismiss();
+//                    })
+//                    .show();
         }
     }
     private void showSettingsDialog() {

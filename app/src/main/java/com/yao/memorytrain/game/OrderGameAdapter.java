@@ -1,4 +1,4 @@
-package com.yao.memorytrain;
+package com.yao.memorytrain.game;
 
 import android.content.Context;
 import android.graphics.Color;
